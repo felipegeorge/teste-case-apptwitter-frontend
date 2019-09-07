@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>App Twitter</title>
+    <style>
+		alignment {
+			text-align:center !important;
+			vertical-align:middle !important;
+			}
+	</style>
+</head>
+<body>
+
+<div id='root'></div>
+
+<script src="https://fb.me/react-15.0.1.js"></script>
+<script src="https://fb.me/react-dom-15.0.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<script type="text/babel">
+
+    var TweetGroupByHashtag = React.createClass({
+        render: function () {
+            return (
+                <tr>
+					<td>{this.props.tweet.id}</td>
+                    <td>{this.props.tweet.countTweets}</td>
+                    <td>{this.props.tweet.tag}</td>
+                    <td>{this.props.tweet.location}</td>
+                </tr>);
+        }
+    });
+
+    var Table = React.createClass({
+        render: function () {
+            var rowsTable = [];
+            this.props.dataTweetsGroupedByHashtag.forEach(function (tweet) {
+                rowsTable.push(<TweetGroupByHashtag key={tweet.id}
+                                                               tweet={tweet}/>);
+            });
+
+            return (
+                <div className="container">
+					<br/><br/>
+					<table className="table table-striped">
+                        <thead><tr><th>Exibindo o total de postagens para cada uma das #tags por pa&iacute;s do usu&aacute;rio que postou</th></tr></thead>
+					</table>
+					<table className="table table-striped">
+                        <thead>
+						<tr>
+							<th>ID</th>
+                            <th>Amount Tweets</th>
+                            <th>Hashtag</th>
+                            <th>Location</th>
+                        </tr>
+                        </thead>
+                        <tbody>{rowsTable}</tbody>
+                    </table>
+                </div>);
+        }
+    });
+
+    var App = React.createClass({
+        loadDataTweetsGroupedByHashtag: function () {
+            var self = this;
+            $.ajax({
+                crossDomain: true,
+                url: "http://localhost:8081/twitter/api/v1/tweet/groupbyhashtag",
+            }).then(function (data) {
+                self.setState({dataTweetsGroupedByHashtag: data.datas});
+            });
+        },
+        getInitialState: function () {
+            return {dataTweetsGroupedByHashtag: []};
+        },
+        componentDidMount: function () {
+            this.loadDataTweetsGroupedByHashtag();
+        },
+        render() {
+            return (<Table
+                dataTweetsGroupedByHashtag={this.state.dataTweetsGroupedByHashtag}
+            />);
+        }
+    });
+
+    ReactDOM.render(<App/>, document.getElementById('root'));
+
+</script>
+
+</body>
+</html>

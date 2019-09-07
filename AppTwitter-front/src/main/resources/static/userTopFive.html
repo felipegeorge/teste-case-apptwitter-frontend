@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>App Twitter</title>
+    <style>
+		alignment {
+			text-align:center !important;
+			vertical-align:middle !important;
+			}
+	</style>
+</head>
+<body>
+
+<div id='root'></div>
+
+<script src="https://fb.me/react-15.0.1.js"></script>
+<script src="https://fb.me/react-dom-15.0.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<script type="text/babel">
+
+    var UserTopFive = React.createClass({
+        render: function () {
+            return (
+                <tr>
+					<td>{this.props.user.userName}</td>
+					<td>{this.props.user.followersCount}</td>
+                    <td>{this.props.user.location}</td>
+                </tr>);
+        }
+    });
+
+    var Table = React.createClass({
+        render: function () {
+            var rowsTable = [];
+            this.props.dataUserTopFive.forEach(function (user) {
+                rowsTable.push(<UserTopFive key={user.id}
+                                                               user={user}/>);
+            });
+
+            return (
+                <div className="container">
+					<br/><br/>
+					<table className="table table-striped">
+                        <thead><tr><th>Exibindo os 5 usu&aacute;rios que possuem mais seguidores</th></tr></thead>
+					</table>
+					<table className="table table-striped">
+                        <thead>
+						<tr>
+                            <th>Username</th>
+							<th>Amount Followers</th>
+                            <th>Location</th>
+                        </tr>
+                        </thead>
+                        <tbody>{rowsTable}</tbody>
+                    </table>
+                </div>);
+        }
+    });
+
+    var App = React.createClass({
+        loadDataUserTopFive: function () {
+            var self = this;
+            $.ajax({
+                crossDomain: true,
+                url: "http://localhost:8081/twitter/api/v1/user/topfive",
+            }).then(function (data) {
+                self.setState({dataUserTopFive: data.datas});
+            });
+        },
+        getInitialState: function () {
+            return {dataUserTopFive: []};
+        },
+        componentDidMount: function () {
+            this.loadDataUserTopFive();
+        },
+        render() {
+            return (<Table
+                dataUserTopFive={this.state.dataUserTopFive}
+            />);
+        }
+    });
+
+    ReactDOM.render(<App/>, document.getElementById('root'));
+
+</script>
+
+</body>
+</html>

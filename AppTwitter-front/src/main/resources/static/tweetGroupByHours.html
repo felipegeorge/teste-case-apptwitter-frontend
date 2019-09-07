@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>App Twitter</title>
+    <style>
+		alignment {
+			text-align:center !important;
+			vertical-align:middle !important;
+			}
+	</style>
+</head>
+<body>
+
+<div id='root'></div>
+
+<script src="https://fb.me/react-15.0.1.js"></script>
+<script src="https://fb.me/react-dom-15.0.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<script type="text/babel">
+
+    var TweetGroupByHour = React.createClass({
+        render: function () {
+            return (
+                <tr>
+					<td>{this.props.tweet.countTweets}</td>
+                    <td>{this.props.tweet.hourDateFormat}</td>
+                </tr>);
+        }
+    });
+
+    var Table = React.createClass({
+        render: function () {
+            var rowsTable = [];
+            this.props.dataTweetsGroupedByHour.forEach(function (tweet) {
+                rowsTable.push(<TweetGroupByHour key={tweet.hourDateFormat}
+                                                               tweet={tweet}/>);
+            });
+
+            return (
+                <div className="container">
+					<br/><br/>
+					<table className="table table-striped">
+                        <thead><tr><th>Exibindo o total de postagens, agrupadas por hora do dia</th></tr></thead>
+					</table>
+					<table className="table table-striped">
+                        <thead>
+						<tr>
+                            <th>Amount Tweets</th>
+                            <th>Hour / Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>{rowsTable}</tbody>
+                    </table>
+                </div>);
+        }
+    });
+
+    var App = React.createClass({
+        loadDataTweetsGroupedByHour: function () {
+            var self = this;
+            $.ajax({
+                crossDomain: true,
+                url: "http://localhost:8081/twitter/api/v1/tweet/groupbyhours",
+            }).then(function (data) {
+                self.setState({dataTweetsGroupedByHour: data.datas});
+            });
+        },
+        getInitialState: function () {
+            return {dataTweetsGroupedByHour: []};
+        },
+        componentDidMount: function () {
+            this.loadDataTweetsGroupedByHour();
+        },
+        render() {
+            return (<Table
+                dataTweetsGroupedByHour={this.state.dataTweetsGroupedByHour}
+            />);
+        }
+    });
+
+    ReactDOM.render(<App/>, document.getElementById('root'));
+
+</script>
+
+</body>
+</html>
