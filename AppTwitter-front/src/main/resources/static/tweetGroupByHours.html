@@ -64,7 +64,7 @@
             var self = this;
             $.ajax({
                 crossDomain: true,
-                url: "http://localhost:8081/twitter/api/v1/tweet/groupbyhours",
+                url: "https://a15zyxekkj.execute-api.us-east-1.amazonaws.com/dev/groupbyhours",
             }).then(function (data) {
                 self.setState({dataTweetsGroupedByHour: data.datas});
             });

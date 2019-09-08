@@ -68,7 +68,7 @@
             var self = this;
             $.ajax({
                 crossDomain: true,
-                url: "http://localhost:8081/twitter/api/v1/tweet/groupbyhashtag",
+                url: "https://a15zyxekkj.execute-api.us-east-1.amazonaws.com/dev/groupbyhashtag",
             }).then(function (data) {
                 self.setState({dataTweetsGroupedByHashtag: data.datas});
             });
